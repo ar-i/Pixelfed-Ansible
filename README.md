@@ -10,7 +10,6 @@ as good as possible.
 
 #### Requirements
 
-Software:
 * A debian-based machine with administrative access
 * A domain with an A- / AAAA-record pointed to the machine
 * Configure all the variables in `vars/main.yml`
