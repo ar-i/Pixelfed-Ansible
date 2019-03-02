@@ -1,0 +1,44 @@
+---
+- name: Add PHP-Repository
+  apt: name=apt-transport-https state=present
+- apt_key: url="https://packages.sury.org/php/apt.gpg" state=present
+- apt_repository: repo="deb https://packages.sury.org/php/ stretch main" state=present
+
+- name: Install dependencies through apt
+  apt: name={{ item }} state=present update_cache=true
+  with_items:
+    - nginx
+    - php7.3-fpm
+    - redis-server
+    - php7.3-gd
+    - php7.3-dba
+    - php7.3-pgsql
+    - php7.3-mbstring
+    - php7.3-xml
+    - php7.3-bcmath
+    - php7.3-curl
+    - php-token-stream
+    - php7.3-json
+    - python-psycopg2
+    - jpegoptim
+    - pngquant
+    - gifsicle
+    - apt-transport-https
+    - dehydrated
+    - git
+    - sudo
+    - postgresql
+    - python-mysqldb
+
+- name: Install Composer
+  get_url: url="https://getcomposer.org/installer" dest=/tmp/composer-installer.php mode=0755
+- command: php /tmp/composer-installer.php --install-dir=/usr/local/bin
+  args:
+    creates: /usr/local/bin/composer
+- name: Install NodeJS for SVGO
+  apt_key: url="https://deb.nodesource.com/gpgkey/nodesource.gpg.key" state=present
+- apt_repository: repo="deb https://deb.nodesource.com/node_8.x stretch main" state=present
+- apt: name=nodejs update_cache=yes state=present
+
+- name: Install SVGO
+  command: npm install -g svgo

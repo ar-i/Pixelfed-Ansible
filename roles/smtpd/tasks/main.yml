@@ -1,0 +1,12 @@
+---
+- name: Install opensmtpd
+  apt: name=opensmtpd state=latest update_cache=yes
+
+- name: Ensure TLS-certificate is present
+  file: src=/var/lib/dehydrated/certs/{{ hostname }}/fullchain.pem dest=/etc/ssl/{{ hostname }}.crt state=link
+- file: src=/var/lib/dehydrated/certs/{{ hostname }}/privkey.pem dest=/etc/ssl/private/{{ hostname }}.key state=link
+
+- name: Copy OpenSMTPd configuration
+  template: src=smtpd.conf.j2 dest=/etc/smtpd.conf owner=root group=root mode=0400
+  notify:
+    - Restart OpenSMTPd

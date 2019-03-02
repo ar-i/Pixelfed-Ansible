@@ -1,0 +1,6 @@
+---
+- name: Create user / database
+  shell: sudo -u postgres createuser {{ db_username }}
+- shell: sudo -u postgres createdb {{ db_name }}
+- shell: sudo -u postgres psql -c "alter user {{ db_username }} with encrypted password '{{ db_password }}';"
+- shell: sudo -u postgres psql -c "grant all privileges on database {{ db_name }} to {{ db_username }};"

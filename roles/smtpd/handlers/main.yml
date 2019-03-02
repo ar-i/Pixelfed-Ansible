@@ -1,0 +1,3 @@
+---
+- name: Restart OpenSMTPd
+  service: name=opensmtpd state=restarted

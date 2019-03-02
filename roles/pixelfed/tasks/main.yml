@@ -1,0 +1,20 @@
+---
+- name: Clone the git repository
+  git: repo="https://github.com/dansup/pixelfed" dest="/var/www/pixelfed"
+- file: path="/var/www/pixelfed" owner=www-data group=www-data recurse=yes
+- file: path="/var/www/.composer" state=directory owner=www-data group=www-data
+
+- name: Composer install
+  shell: cd /var/www/pixelfed; sudo -u www-data /usr/local/bin/composer.phar install --no-dev
+
+- name: Copy configuration file
+  template: src=env.j2 dest=/var/www/pixelfed/.env owner=www-data group=www-data mode=0600
+
+- name: Generate key, link storage, migrate database scheme
+  shell: cd /var/www/pixelfed; sudo -u www-data php artisan key:generate
+- shell: cd /var/www/pixelfed; sudo -u www-data php artisan storage:link
+- shell: cd /var/www/pixelfed; sudo -u www-data php artisan migrate
+
+- name: Install unitfile for Horizon, start Horizon
+  template: src=horizon.service.j2 dest=/etc/systemd/system/horizon.service
+- systemd: state=started name=horizon daemon_reload=yes

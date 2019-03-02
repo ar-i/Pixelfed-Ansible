@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: yes
+  become_method: su
+  gather_facts: yes
+  vars_files:
+    - vars/main.yml
+  roles:
+    - packages
+    - nginx
+    - smtpd
+    - database
+    - pixelfed

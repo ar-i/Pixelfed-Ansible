@@ -1,0 +1,28 @@
+---
+- name: Copy default nginx configuration
+  template: src=default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0400
+  notify:
+    - Restart nginx
+
+- meta: flush_handlers
+
+- name: Copy dehydrated-configuration
+  template: src=config.j2 dest=/etc/dehydrated/config owner=root group=root mode=0400
+- template: src=domains.txt.j2 dest=/etc/dehydrated/domains.txt owner=root group=root mode=0400
+
+- name: Generate TLS-certificates
+  file: name=/var/www/dehydrated/ state=directory
+- shell: /usr/bin/dehydrated -c
+- file: name=/etc/nginx/ssl state=directory owner=root group=root mode=0500
+- file: src=/var/lib/dehydrated/certs/{{ hostname }}/fullchain.pem dest=/etc/nginx/ssl/{{ hostname }}.crt state=link
+- file: src=/var/lib/dehydrated/certs/{{ hostname }}/privkey.pem dest=/etc/nginx/ssl/{{ hostname }}.key state=link
+
+- name: Copy final nginx configuration
+  template: src=final-default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0400
+  notify:
+    - Restart nginx
+
+- name: Copy PHP-configuration
+  template: src=www.conf.j2 dest=/etc/php/7.3/fpm/pool.d/www.conf owner=root group=root mode=0400
+  notify:
+    - Restart PHP

@@ -1,0 +1,13 @@
+[Unit]
+Description=Horizon for Pixelfed
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/pixelfed
+ExecStart=/usr/bin/php artisan horizon
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

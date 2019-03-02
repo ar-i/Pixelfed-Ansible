@@ -1,0 +1,6 @@
+pki {{ hostname }} certificate "/etc/ssl/{{ hostname }}.crt"
+pki {{ hostname }} key "/etc/ssl/private/{{ hostname }}.key"
+
+listen on localhost
+
+accept for any relay
